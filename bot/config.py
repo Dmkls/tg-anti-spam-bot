@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 class Config:
     bot_token: str
     db_path: str = "bot.db"
+    proxy_url: str | None = None
 
 
 def load_config() -> Config:
@@ -18,4 +19,5 @@ def load_config() -> Config:
             "BOT_TOKEN is not set. Copy .env.example to .env and fill it in."
         )
     db_path = os.environ.get("BOT_DB_PATH", "bot.db")
-    return Config(bot_token=token, db_path=db_path)
+    proxy_url = os.environ.get("BOT_PROXY_URL") or None
+    return Config(bot_token=token, db_path=db_path, proxy_url=proxy_url)

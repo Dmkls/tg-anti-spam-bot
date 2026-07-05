@@ -2,9 +2,10 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.session.aiohttp import AiohttpSession
 
 from bot.admin_cache import AdminCache
-from bot.config import load_config
+from bot.config import Config, load_config
 from bot.db import init_db
 from bot.handlers.add_to_spam import router as add_to_spam_router
 from bot.handlers.automod import router as automod_router
@@ -13,11 +14,17 @@ from bot.handlers.list_spam import router as list_spam_router
 from bot.handlers.remove_from_spam import router as remove_from_spam_router
 
 
+def build_bot(config: Config) -> Bot:
+    if config.proxy_url:
+        return Bot(token=config.bot_token, session=AiohttpSession(proxy=config.proxy_url))
+    return Bot(token=config.bot_token)
+
+
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
     config = load_config()
 
-    bot = Bot(token=config.bot_token)
+    bot = build_bot(config)
     dispatcher = Dispatcher()
     dispatcher.include_router(add_to_spam_router)
     dispatcher.include_router(list_spam_router)

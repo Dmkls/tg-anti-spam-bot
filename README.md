@@ -20,6 +20,20 @@ flagged, and bans the sender in that chat.
    python -m bot
    ```
 
+## Running behind a proxy
+
+If the server running the bot can't reach Telegram directly (e.g. Telegram
+is blocked on that network), set `BOT_PROXY_URL` in `.env` to route all
+Telegram API requests through a proxy:
+
+```
+BOT_PROXY_URL=socks5://user:pass@1.2.3.4:1080
+```
+
+Supported schemes: `socks5://`, `socks4://`, `http://` (with or without
+`user:pass@` credentials). Leave `BOT_PROXY_URL` empty (or unset) to connect
+directly, which is the default.
+
 ## Commands (admins/owner only)
 
 - `/add_to_spam` — reply to a message with this command to save its exact
