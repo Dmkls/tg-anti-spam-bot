@@ -1,7 +1,20 @@
+from dotenv import load_dotenv
+
+from bot.config import env_flag
+
+# aiohttp caches its default SSL context at import time (aiohttp.connector's
+# module-level _SSL_CONTEXT_VERIFIED), so truststore must patch ssl.SSLContext
+# before aiogram/aiohttp are imported anywhere below, or that cached context
+# is left pointing at the real, un-patched class.
+load_dotenv()
+if env_flag("BOT_TRUST_SYSTEM_CERTS"):
+    import truststore
+
+    truststore.inject_into_ssl()
+
 import asyncio
 import logging
 
-import truststore
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 
@@ -16,8 +29,6 @@ from bot.handlers.remove_from_spam import router as remove_from_spam_router
 
 
 def build_bot(config: Config) -> Bot:
-    if config.trust_system_certs:
-        truststore.inject_into_ssl()
     if config.proxy_url:
         return Bot(token=config.bot_token, session=AiohttpSession(proxy=config.proxy_url))
     return Bot(token=config.bot_token)
