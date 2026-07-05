@@ -1,9 +1,12 @@
+import itertools
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
 
 from bot import db
+
+_message_id_counter = itertools.count(1)
 
 
 @pytest.fixture
@@ -27,6 +30,7 @@ def make_bot(bot_id=999, admins=None, raise_on_ban=False, raise_on_send_message=
         bot.send_message = AsyncMock(side_effect=RuntimeError("forbidden"))
     else:
         bot.send_message = AsyncMock(return_value=None)
+    bot.delete_message = AsyncMock(return_value=True)
     return bot
 
 
@@ -34,12 +38,18 @@ def make_user(user_id, username="spammer", full_name="Spam Mer"):
     return SimpleNamespace(id=user_id, username=username, full_name=full_name)
 
 
-def make_message(chat_id, user, text, reply_to_message=None, chat_title="Test Chat"):
+def make_message(chat_id, user, text, reply_to_message=None, chat_title="Test Chat", message_id=None):
+    if message_id is None:
+        message_id = next(_message_id_counter)
+
     message = SimpleNamespace()
     message.chat = SimpleNamespace(id=chat_id, title=chat_title)
     message.from_user = user
     message.text = text
+    message.message_id = message_id
     message.reply_to_message = reply_to_message
-    message.reply = AsyncMock(return_value=None)
+    message.reply = AsyncMock(
+        side_effect=lambda text, **kwargs: make_message(chat_id, user, text, chat_title=chat_title)
+    )
     message.delete = AsyncMock(return_value=None)
     return message

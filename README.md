@@ -53,7 +53,9 @@ TCP relay and can't do this). Try, in order:
 
 - `/add_to_spam` — reply to a message with this command to save its exact
   text as spam. The message is deleted and its author is banned (unless the
-  author is an admin, in which case only the message is deleted).
+  author is an admin, in which case only the message is deleted). Both the
+  `/add_to_spam` command message and the bot's confirmation reply are
+  auto-deleted after 10 seconds to keep the chat clean.
 - `/list_spam` — list saved spam texts for this chat.
 - `/remove_from_spam <id>` — remove a saved spam text by its number from
   `/list_spam`.
@@ -95,3 +97,5 @@ checked by hand in a test group:
 - [ ] Typing `/` in the chat shows the three commands with descriptions.
 - [ ] An admin posting anonymously ("send as group") can use `/add_to_spam`,
       `/list_spam`, `/remove_from_spam`, and is exempt from automod.
+- [ ] After `/add_to_spam`, both the command message and the confirmation
+      reply disappear on their own after about 10 seconds.
