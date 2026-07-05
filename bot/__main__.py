@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+import truststore
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 
@@ -15,6 +16,8 @@ from bot.handlers.remove_from_spam import router as remove_from_spam_router
 
 
 def build_bot(config: Config) -> Bot:
+    if config.trust_system_certs:
+        truststore.inject_into_ssl()
     if config.proxy_url:
         return Bot(token=config.bot_token, session=AiohttpSession(proxy=config.proxy_url))
     return Bot(token=config.bot_token)

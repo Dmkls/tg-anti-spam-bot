@@ -49,3 +49,29 @@ def test_load_config_treats_empty_proxy_url_as_none(monkeypatch):
     monkeypatch.setenv("BOT_PROXY_URL", "")
     config = load_config()
     assert config.proxy_url is None
+
+
+def test_load_config_defaults_trust_system_certs_to_false(monkeypatch):
+    monkeypatch.setattr("bot.config.load_dotenv", lambda: None)
+    monkeypatch.setenv("BOT_TOKEN", "test-token-123")
+    monkeypatch.delenv("BOT_TRUST_SYSTEM_CERTS", raising=False)
+    config = load_config()
+    assert config.trust_system_certs is False
+
+
+@pytest.mark.parametrize("value", ["true", "True", "1", "yes", "YES"])
+def test_load_config_reads_trust_system_certs_true_values(monkeypatch, value):
+    monkeypatch.setattr("bot.config.load_dotenv", lambda: None)
+    monkeypatch.setenv("BOT_TOKEN", "test-token-123")
+    monkeypatch.setenv("BOT_TRUST_SYSTEM_CERTS", value)
+    config = load_config()
+    assert config.trust_system_certs is True
+
+
+@pytest.mark.parametrize("value", ["false", "False", "0", "no", ""])
+def test_load_config_reads_trust_system_certs_false_values(monkeypatch, value):
+    monkeypatch.setattr("bot.config.load_dotenv", lambda: None)
+    monkeypatch.setenv("BOT_TOKEN", "test-token-123")
+    monkeypatch.setenv("BOT_TRUST_SYSTEM_CERTS", value)
+    config = load_config()
+    assert config.trust_system_certs is False

@@ -24,3 +24,27 @@ def test_build_bot_with_proxy_configures_session_proxy():
     bot = build_bot(config)
 
     assert bot.session.proxy == "socks5://user:pass@127.0.0.1:1080"
+
+
+def test_build_bot_without_trust_system_certs_does_not_inject_truststore(monkeypatch):
+    import bot.__main__ as main_module
+
+    called = []
+    monkeypatch.setattr(main_module.truststore, "inject_into_ssl", lambda: called.append(True))
+
+    config = Config(bot_token="123456:test-token-abc", trust_system_certs=False)
+    main_module.build_bot(config)
+
+    assert called == []
+
+
+def test_build_bot_with_trust_system_certs_injects_truststore(monkeypatch):
+    import bot.__main__ as main_module
+
+    called = []
+    monkeypatch.setattr(main_module.truststore, "inject_into_ssl", lambda: called.append(True))
+
+    config = Config(bot_token="123456:test-token-abc", trust_system_certs=True)
+    main_module.build_bot(config)
+
+    assert called == [True]

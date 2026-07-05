@@ -34,6 +34,21 @@ Supported schemes: `socks5://`, `socks4://`, `http://` (with or without
 `user:pass@` credentials). Leave `BOT_PROXY_URL` empty (or unset) to connect
 directly, which is the default.
 
+### SSL error: "self-signed certificate in certificate chain"
+
+If the bot fails to start with an SSL error like this, it's almost always
+caused by local antivirus/security software (Kaspersky and similar are
+common in Russia) that intercepts HTTPS traffic and re-signs it with its
+own certificate — not by your proxy itself (a real SOCKS proxy is a blind
+TCP relay and can't do this). Try, in order:
+
+1. Disable "scan encrypted connections" (or add an exception for
+   `python.exe`) in your antivirus, then restart the bot.
+2. If that's not possible, set `BOT_TRUST_SYSTEM_CERTS=true` in `.env` so
+   the bot also trusts your OS's system certificate store (where the
+   antivirus's certificate is installed), in addition to its normal bundled
+   certificate list.
+
 ## Commands (admins/owner only)
 
 - `/add_to_spam` — reply to a message with this command to save its exact
