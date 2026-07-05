@@ -18,11 +18,11 @@ async def remove_from_spam_handler(
         return
 
     args = (command.args or "").strip()
-    if not args.isdigit():
+    try:
+        spam_id = int(args)
+    except ValueError:
         await message.reply("Использование: /remove_from_spam <id>")
         return
-
-    spam_id = int(args)
     removed = await db.remove_spam_text(conn, chat_id, spam_id)
     if removed:
         await message.reply(f"✅ Запись #{spam_id} удалена.")
