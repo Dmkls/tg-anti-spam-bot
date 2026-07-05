@@ -3,6 +3,12 @@ from typing import Callable
 
 CACHE_TTL_SECONDS = 300.0
 
+# Telegram's fixed pseudo-user id for messages sent anonymously "as the
+# group" (username @GroupAnonymousBot). This id is the same in every
+# Telegram group and never appears in getChatAdministrators, even though
+# only an admin/owner can enable anonymous posting in the first place.
+GROUP_ANONYMOUS_ADMIN_ID = 1087968824
+
 
 class AdminCache:
     def __init__(
@@ -28,5 +34,7 @@ class AdminCache:
         return admin_ids
 
     async def is_admin(self, bot, chat_id: int, user_id: int) -> bool:
+        if user_id == GROUP_ANONYMOUS_ADMIN_ID:
+            return True
         admin_ids = await self.get_admin_ids(bot, chat_id)
         return user_id in admin_ids

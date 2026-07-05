@@ -58,6 +58,13 @@ TCP relay and can't do this). Try, in order:
 - `/remove_from_spam <id>` — remove a saved spam text by its number from
   `/list_spam`.
 
+These commands, with their descriptions, also show up in Telegram's `/`
+autocomplete menu — the bot registers them via `setMyCommands` on startup.
+
+Admins posting anonymously "as the group" (Telegram's `@GroupAnonymousBot`
+sender) are recognized as admins too, since only an admin/owner can enable
+anonymous posting in the first place.
+
 ## How automoderation works
 
 Every non-command text message is compared byte-for-byte (case, spaces, and
@@ -85,3 +92,6 @@ checked by hand in a test group:
       it and it no longer triggers automod.
 - [ ] The user who added the bot receives a DM after an automod action
       (having pressed Start beforehand).
+- [ ] Typing `/` in the chat shows the three commands with descriptions.
+- [ ] An admin posting anonymously ("send as group") can use `/add_to_spam`,
+      `/list_spam`, `/remove_from_spam`, and is exempt from automod.

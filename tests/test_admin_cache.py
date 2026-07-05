@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from bot.admin_cache import AdminCache
+from bot.admin_cache import GROUP_ANONYMOUS_ADMIN_ID, AdminCache
 
 
 def make_fake_bot(admin_ids):
@@ -59,3 +59,13 @@ async def test_cache_is_per_chat():
     await cache.get_admin_ids(bot, chat_id=200)
 
     assert bot.get_chat_administrators.await_count == 2
+
+
+async def test_anonymous_group_admin_is_always_treated_as_admin():
+    bot = make_fake_bot([1, 2])
+    cache = AdminCache()
+
+    result = await cache.is_admin(bot, chat_id=100, user_id=GROUP_ANONYMOUS_ADMIN_ID)
+
+    assert result is True
+    bot.get_chat_administrators.assert_not_awaited()

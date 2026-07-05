@@ -19,6 +19,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
 
 from bot.admin_cache import AdminCache
+from bot.commands import BOT_COMMANDS
 from bot.config import Config, load_config
 from bot.db import init_db
 from bot.handlers.add_to_spam import router as add_to_spam_router
@@ -39,6 +40,7 @@ async def main() -> None:
     config = load_config()
 
     bot = build_bot(config)
+    await bot.set_my_commands(BOT_COMMANDS)
     dispatcher = Dispatcher()
     dispatcher.include_router(add_to_spam_router)
     dispatcher.include_router(list_spam_router)
